@@ -1,7 +1,6 @@
 package core_http_middleware
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -15,7 +14,6 @@ func ChainMiddleware(
 		return h
 	}
 	for i := len(m) - 1; i >= 0; i-- {
-		fmt.Println("Middleware: ", i)
 		h = m[i](h)
 	}
 

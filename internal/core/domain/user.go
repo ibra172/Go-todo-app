@@ -34,11 +34,11 @@ func NewUserUninitialized(fullname string, phoneNumber *string) User {
 }
 
 func (u *User) Validate() error {
-	fullNamelength := len([]rune(u.Fullname))
-	if fullNamelength < 3 || fullNamelength > 100 {
+	fullNameLength := len([]rune(u.Fullname))
+	if fullNameLength < 3 || fullNameLength > 100 {
 		return fmt.Errorf(
 			"invalid `FullName` len: %d: %w",
-			fullNamelength,
+			fullNameLength,
 			core_errors.ErrInvalidArg,
 		)
 	}

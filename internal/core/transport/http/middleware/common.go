@@ -2,7 +2,6 @@ package core_http_middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -19,7 +18,6 @@ const (
 func RequestID() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("RequestID() Middleware")
 			requestID := r.Header.Get(requestIDHeader)
 			if requestID == "" {
 				requestID = uuid.NewString()
@@ -36,7 +34,6 @@ func RequestID() Middleware {
 func Logger(log *core_logger.Logger) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Logger() Middleware")
 			requestID := r.Header.Get(requestIDHeader)
 
 			l := log.With(
@@ -54,7 +51,6 @@ func Logger(log *core_logger.Logger) Middleware {
 func Panic() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Panic() Middleware")
 			ctx := r.Context()
 			log := core_logger.FromContext(ctx)
 			responseHandler := core_http_response.NewHTTPResponseHandler(log, w)
@@ -76,7 +72,6 @@ func Panic() Middleware {
 func Trace() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Trace() Middleware")
 			ctx := r.Context()
 			log := core_logger.FromContext(ctx)
 			rw := core_http_response.NewResponseWriter(w)
