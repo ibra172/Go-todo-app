@@ -1,14 +1,14 @@
 package main
 
 import (
-	"context"	
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	core_logger "github.com/ibra172/Go-todo-app/internal/core/logger"
-	core_postgres_pool "github.com/ibra172/Go-todo-app/internal/core/repository/postgres/pool"
+	core_pgx_pool "github.com/ibra172/Go-todo-app/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/ibra172/Go-todo-app/internal/core/transport/http/middleware"
 	core_http_server "github.com/ibra172/Go-todo-app/internal/core/transport/http/server"
 	users_postgres_repository "github.com/ibra172/Go-todo-app/internal/features/users/repository/postgres"
@@ -29,10 +29,11 @@ func main() {
 	defer logger.Close()
 
 	logger.Debug("initializing postgres connection pool")
-	pool, err := core_postgres_pool.NewConectionPool(
+	pool, err := core_pgx_pool.NewPool(
 		ctx,
-		core_postgres_pool.NewConfigMust(),
+		core_pgx_pool.NewConfigMust(),
 	)
+
 	if err != nil {
 		logger.Fatal("failed to init postgres connection pool", zap.Error(err))
 	}
@@ -53,10 +54,10 @@ func main() {
 		core_http_middleware.Panic(),
 	)
 
-	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
-	apiVersionRouter.RegisterRoutes(usersTransportHTTP.Routes()...)
+	apiVersionRouterV1 := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
+	apiVersionRouterV1.RegisterRoutes(usersTransportHTTP.Routes()...)
 
-	httpServer.RegisterAPIRouters(apiVersionRouter)
+	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("HTTP server run error", zap.Error(err))

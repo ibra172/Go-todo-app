@@ -7,7 +7,7 @@ import (
 
 	"github.com/ibra172/Go-todo-app/internal/core/domain"
 	core_errors "github.com/ibra172/Go-todo-app/internal/core/errors"
-	"github.com/jackc/pgx/v5"
+	core_postgres_pool "github.com/ibra172/Go-todo-app/internal/core/repository/postgres/pool"
 )
 
 func (r *UsersRepository) GetUser(
@@ -32,7 +32,7 @@ func (r *UsersRepository) GetUser(
 		&userModel.Fullname,
 		&userModel.PhoneNumber,
 	); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.User{}, fmt.Errorf(
 				"user with id=%d: %w",
 				id,
